@@ -1,0 +1,22 @@
+plot4 <- function() {
+  inp_table <- read.table("household_power_consumption.txt", header = TRUE, sep = ";", colClasses = "character")
+  inp_table$Time <- strptime(paste(inp_table$Date, inp_table$Time, sep = " "), format = "%d/%m/%Y %H:%M:%S")
+  inp_table$Date <- as.Date(inp_table$Date, format = "%d/%m/%Y")
+  working_table <- inp_table[inp_table$Date == "2007-02-01" | inp_table$Date == "2007-02-02", ]
+  active_power <- as.numeric(working_table$Global_active_power)
+  reactive_power <- as.numeric(working_table$Global_reactive_power)
+  voltage <- as.numeric(working_table$Voltage)
+  sub_metering_1 <- as.numeric(working_table$Sub_metering_1)
+  sub_metering_2 <- as.numeric(working_table$Sub_metering_2)
+  sub_metering_3 <- as.numeric(working_table$Sub_metering_3) 
+  png(filename = "plot4.png", width = 480, height = 480)
+  par(mfrow = c(2, 2))
+  plot(working_table$Time, active_power, type = "l", ylab = "Global Active Power", xlab = "", col = "black")
+  plot(working_table$Time, voltage, type = "l", xlab = "datetime", ylab = "Voltage", col = "black")
+  plot(working_table$Time, sub_metering_1, type = "l", ylab = "Energy sub metering", xlab = "", col = "black")
+  lines(working_table$Time, sub_metering_2, col = "red")
+  lines(working_table$Time, sub_metering_3, col = "blue")
+  legend("topright", c("Sub_metering_1", "Sub_metering_2", "Sub_metering_3"), col = c("black", "red", "blue"), cex = 0.5, lty = c(1,1))
+  plot(working_table$Time, reactive_power, type = "l", ylab = "Global_reactive_power", xlab = "datetime", col = "black")
+  dev.off()
+}
